@@ -14,7 +14,7 @@ def run():
     for listing in listings:
         data.append(processListing(listing))
 
-    print(json.dumps(data, indent=4, sort_keys=True))
+    writeToFile(json.dumps(data, sort_keys=True))
 
 
 def getListings():
@@ -74,6 +74,19 @@ def processListing(listing):
     except:
         pass
 
+
+    publText = listing.find(
+        "div", class_="publ-date").getText().replace("\n", "").strip()
+
+    try:
+        dict["publ"] = re.search(
+            r'publ.\s*(.*)', publText, re.IGNORECASE).group(1)
+    except KeyboardInterrupt:
+        sys.exit()
+    except:
+        pass
+    
+
     try:
         coords = getCoordsFor(
             dict["url"], dict["street"], dict["streetNumber"])
@@ -115,6 +128,12 @@ def geNominatimCoordsFor(street, streetNumber):
 
 def removeNonNumbers(string):
     return re.sub(r'\D', "", string)
+
+def writeToFile(listings):
+    path = "./res.js"
+
+    with open(path, 'w') as file:
+        file.write("let listings = " + listings)
 
 
 run()
