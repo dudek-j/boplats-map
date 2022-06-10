@@ -11,8 +11,7 @@ def run():
     listings = getListings()
     data = []
 
-    for idx, listing in enumerate(listings):
-        print(f'Processing {idx + 1}/{len(listings)}')
+    for listing in listings:
         data.append(processListing(listing))
 
     print(json.dumps(data, indent=4, sort_keys=True))
@@ -76,7 +75,8 @@ def processListing(listing):
         pass
 
     try:
-        coords = getCoordinatesFor(dict["url"])
+        coords = getCoordsFor(
+            dict["url"], dict["street"], dict["streetNumber"])
         dict["lat"] = coords[0]
         dict["lon"] = coords[1]
     except KeyboardInterrupt:
@@ -87,7 +87,7 @@ def processListing(listing):
     return dict
 
 
-def getCoordinatesFor(url):
+def getCoordsFor(url, street, streetNumber):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -98,13 +98,23 @@ def getCoordinatesFor(url):
     except KeyboardInterrupt:
         sys.exit()
     except:
-        print(url)
+        return geNominatimCoordsFor(street, streetNumber)
+
+
+def geNominatimCoordsFor(street, streetNumber):
+    url = f'https://nominatim.openstreetmap.org/search/?city=Gothenburg&street={streetNumber}+{street}&format=json'
+    r = requests.get(url)
+    res = r.json()
+
+    try:
+        place = res[0]
+        return (place["lat"], place["lon"])
+    except:
         return None
 
 
 def removeNonNumbers(string):
-    reg = r'\D'
-    return re.sub(reg, "", string)
+    return re.sub(r'\D', "", string)
 
 
 run()
