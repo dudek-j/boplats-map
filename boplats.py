@@ -68,7 +68,7 @@ def processListing(listing):
 
     try:
         dict["size"] = re.search(
-            r'([0-9]+)\s*m²', listingText, re.IGNORECASE).group(1)
+            r'([0-9,.]+)\s*m²', listingText, re.IGNORECASE).group(1)
     except KeyboardInterrupt:
         sys.exit()
     except:
