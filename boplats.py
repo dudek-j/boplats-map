@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+
+import json
+import sys
+import requests
+import re
+from bs4 import BeautifulSoup
+
+
+def run():
+    listings = getListings()
+    data = []
+
+    for idx, listing in enumerate(listings):
+        print(f'Processing {idx + 1}/{len(listings)}')
+        data.append(processListing(listing))
+
+    print(json.dumps(data, indent=4, sort_keys=True))
+
+
+def getListings():
+    url = "https://nya.boplats.se/sok?types=1hand"
+
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+
+    listings = soup.find_all("div", class_="search-result-item item imageitem")
+
+    return listings
+
+
+def processListing(listing):
+    dict = {}
+    dict["url"] = listing.find("a", class_="search-result-link")["href"]
+
+    dict["area"] = listing.find(
+        "div", class_="search-result-area-name").getText().replace("\n", "").strip()
+
+    address = listing.find(
+        "div", class_="search-result-address").getText().replace("\n", "").strip()
+
+    try:
+        match = re.search(
+            r'(\D+)\s*(\d*)', address, re.IGNORECASE).groups()
+
+        dict["street"] = match[0].strip()
+        dict["streetNumber"] = match[1]
+
+    except KeyboardInterrupt:
+        sys.exit()
+
+    except:
+        pass
+
+    dict["price"] = listing.find(
+        "div", class_="search-result-price").getText().replace("\n", "").strip()
+
+    dict["price"] = removeNonNumbers(dict["price"])
+
+    listingText = listing.get_text()
+
+    try:
+        dict["rooms"] = re.search(
+            r'([0-9])\s*rum', listingText, re.IGNORECASE).group(1)
+    except KeyboardInterrupt:
+        sys.exit()
+    except:
+        pass
+
+    try:
+        dict["size"] = re.search(
+            r'([0-9]+)\s*m²', listingText, re.IGNORECASE).group(1)
+    except KeyboardInterrupt:
+        sys.exit()
+    except:
+        pass
+
+    try:
+        coords = getCoordinatesFor(dict["url"])
+        dict["lat"] = coords[0]
+        dict["lon"] = coords[1]
+    except KeyboardInterrupt:
+        sys.exit()
+    except:
+        pass
+
+    return dict
+
+
+def getCoordinatesFor(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+
+    try:
+        coord_div = soup.find("div", {"tabindex": "1"})
+        return (coord_div["data-latitude"], coord_div["data-longitude"])
+
+    except KeyboardInterrupt:
+        sys.exit()
+    except:
+        print(url)
+        return None
+
+
+def removeNonNumbers(string):
+    reg = r'\D'
+    return re.sub(reg, "", string)
+
+
+run()
