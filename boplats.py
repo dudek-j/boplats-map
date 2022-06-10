@@ -11,7 +11,8 @@ def run():
     listings = getListings()
     data = []
 
-    for listing in listings:
+    for idx, listing in enumerate(listings):
+        progress_bar(idx + 1, len(listings))
         data.append(processListing(listing))
 
     writeToFile(json.dumps(data, sort_keys=True))
@@ -74,7 +75,6 @@ def processListing(listing):
     except:
         pass
 
-
     publText = listing.find(
         "div", class_="publ-date").getText().replace("\n", "").strip()
 
@@ -85,7 +85,6 @@ def processListing(listing):
         sys.exit()
     except:
         pass
-    
 
     try:
         coords = getCoordsFor(
@@ -128,6 +127,18 @@ def geNominatimCoordsFor(street, streetNumber):
 
 def removeNonNumbers(string):
     return re.sub(r'\D', "", string)
+
+
+def progress_bar(current, total, bar_length=20):
+    fraction = current / total
+
+    arrow = int(fraction * bar_length - 1) * '-' + '>'
+    padding = int(bar_length - len(arrow)) * ' '
+
+    ending = '\n' if current == total else '\r'
+
+    print(f'Progress: [{arrow}{padding}] {int(fraction*100)}%', end=ending)
+
 
 def writeToFile(listings):
     path = "./res.js"
