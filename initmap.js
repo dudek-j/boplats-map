@@ -139,7 +139,20 @@ function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 57.7089, lng: 11.9746 },
     zoom: 12,
+    mapTypeId: "OSM",
+    mapTypeControl: false,
+    streetViewControl: false
   });
+
+  //Define OSM map type pointing at the OpenStreetMap tile server
+  map.mapTypes.set("OSM", new google.maps.ImageMapType({
+    getTileUrl: function(coord, zoom) {
+      return "https://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
+    },
+    tileSize: new google.maps.Size(256, 256),
+    name: "OpenStreetMap",
+    maxZoom: 18
+  }));
 
   infowindow = new google.maps.InfoWindow({});
 
