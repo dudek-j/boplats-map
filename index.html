@@ -4,26 +4,22 @@
     <title>Boplats Map</title>
 
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script type='text/javascript' src='./res.js'></script>
-    <script type='text/javascript' src='./initMap.js'></script>
-    <link rel="stylesheet" href="./index.css">
+    <script type="text/javascript" src="./res.js"></script>
+    <script type="text/javascript" src="./initMap.js"></script>
+    <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
     <div id="container">
-      <div id="map"> </div>
+      <div id="map"></div>
       <div id="picker">
-        <p>Max price: </p>
-        <select name="price" id="price">
-        </select>
-        <p>Min size: </p>
-        <select name="size" id="size">
-        </select>
-        <p>Min room: </p>
-        <select name="rooms" id="rooms">
-        </select>
-        <p>Publicerat: </p>
-        <select name="publ" id="publ">
-        </select>
+        <p>Max price:</p>
+        <select name="price" id="price"></select>
+        <p>Min size:</p>
+        <select name="size" id="size"></select>
+        <p>Min room:</p>
+        <select name="rooms" id="rooms"></select>
+        <p>Publicerat:</p>
+        <select name="publ" id="publ"></select>
         <button type="button" id="apply">Apply filters</button>
         <button type="button" id="clear">Clear filters</button>
       </div>
@@ -31,8 +27,7 @@
   </body>
 
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly"
+    src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&v=weekly"
     defer
   ></script>
-
 </html>
