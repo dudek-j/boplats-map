@@ -33,25 +33,24 @@ def processListing(listing):
     dict = {}
     dict["url"] = listing.find("a", class_="search-result-link")["href"]
 
+    ## Area
     dict["area"] = listing.find(
         "div", class_="search-result-area-name").getText().replace("\n", "").strip()
 
     address = listing.find(
         "div", class_="search-result-address").getText().replace("\n", "").strip()
 
+    ## Adress
     try:
-        match = re.search(
+        addressMatch = re.search(
             r'(\D+)\s*(\d*)', address, re.IGNORECASE).groups()
 
-        dict["street"] = match[0].strip()
-        dict["streetNumber"] = match[1]
-
-    except KeyboardInterrupt:
-        sys.exit()
-
-    except:
+        dict["street"] = addressMatch[0].strip()
+        dict["streetNumber"] = addressMatch[1]
+    except IndexError:
         pass
 
+    ## Price
     dict["price"] = listing.find(
         "div", class_="search-result-price").getText().replace("\n", "").strip()
 
@@ -59,41 +58,37 @@ def processListing(listing):
 
     listingText = listing.get_text()
 
+    ## Rooms
     try:
         dict["rooms"] = re.search(
             r'([0-9])\s*rum', listingText, re.IGNORECASE).group(1)
-    except KeyboardInterrupt:
-        sys.exit()
-    except:
+    except IndexError:
         pass
-
+    
+    ## Size 
     try:
         dict["size"] = re.search(
             r'([0-9,.]+)\s*m²', listingText, re.IGNORECASE).group(1)
-    except KeyboardInterrupt:
-        sys.exit()
-    except:
+    except IndexError:
         pass
 
+    ## Publ date
     publText = listing.find(
         "div", class_="publ-date").getText().replace("\n", "").strip()
 
     try:
         dict["publ"] = re.search(
-            r'publ.\s*(.*)', publText, re.IGNORECASE).group(1)
-    except KeyboardInterrupt:
-        sys.exit()
-    except:
+            r'publ.\s*(.*)', publText, re.IGNORECASE).groups(1)
+    except IndexError:
         pass
-
+    
+    ## Coordinates
     try:
         coords = getCoordsFor(
             dict["url"], dict["street"], dict["streetNumber"])
         dict["lat"] = coords[0]
         dict["lon"] = coords[1]
-    except KeyboardInterrupt:
-        sys.exit()
-    except:
+    except IndexError:
         pass
 
     return dict
@@ -105,11 +100,11 @@ def getCoordsFor(url, street, streetNumber):
 
     try:
         coord_div = soup.find("div", {"tabindex": "1"})
-        return (coord_div["data-latitude"], coord_div["data-longitude"])
-
-    except KeyboardInterrupt:
-        sys.exit()
-    except:
+        if coord_div:
+            return (coord_div["data-latitude"], coord_div["data-longitude"])
+        else:
+            return ()
+    except KeyError:
         return geNominatimCoordsFor(street, streetNumber)
 
 
@@ -121,8 +116,8 @@ def geNominatimCoordsFor(street, streetNumber):
     try:
         place = res[0]
         return (place["lat"], place["lon"])
-    except:
-        return None
+    except KeyError:
+        return ()
 
 
 def removeNonNumbers(string):
@@ -147,4 +142,11 @@ def writeToFile(listings):
         file.write("let listings = " + listings)
 
 
-run()
+try:
+    run()
+except KeyboardInterrupt:
+    print("\n")
+    print('Interrupted')
+    sys.exit(0)
+
+
