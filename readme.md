@@ -1,9 +1,5 @@
-# Instructions
+# About
 
-## Get data
+Alternative way to browse boplats listings, can be found hosted [here](https://dudek.dev/boplats-map/).
 
-Install dependencies from `requirements.txt` and run `boplats.py`
-
-## Display data
-
-Open `index.html` or host with `python3 -m http.server`
+The page is updated with new data every 4 hours
