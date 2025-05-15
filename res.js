@@ -1,1 +1,1 @@
-let listings = [{"area": "Stampen", "lat": "57.71102470000001", "lon": "11.9905675", "price": "9196", "publ": ["idag"], "rooms": "1", "size": "53.5", "street": "Norra \u00c5gatan", "streetNumber": "5", "url": "https://boplats.se/objekt/1hand/6824C05A00DB88426B53C379"}]
+let listings = []
