@@ -1,5 +1,5 @@
 # About
 
-Alternative way to browse boplats listings, can be found hosted [here](https://dudek.dev/boplats-map/).
+Alternative way to browse boplats listings, can be found hosted [here](https://dudek-j.github.io/boplats-map/).
 
 The page is updated with new data every 4 hours
